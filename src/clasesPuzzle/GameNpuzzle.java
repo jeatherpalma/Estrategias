@@ -97,7 +97,7 @@ public class GameNpuzzle {
                         }
                         defaultTableModel.addRow(rowAddTable);
                     }
-					int [][] game = {{1,11,2,9},{5,6,13,4},{8,10,3,12},{7,14,15,0}};
+					int [][] game = {{8,3,0},{6,7,1},{4,2,5}};
 					nodoGenerado = Arbol.nuevoArbol(null,game);
 					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
 					pilaDeNodosExpandir.addElement(nodoGenerado);
@@ -116,8 +116,8 @@ public class GameNpuzzle {
 		jButtonprimeroEnAnchura.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int [][] game = {{1,11,2,9},{5,6,13,4},{8,10,3,12},{7,14,15,0}};
-				int [][]sol = {{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,0}};
+				int [][] game = {{8,3,0},{6,7,1},{4,2,5}};
+				int [][]sol = {{1,2,3},{4,5,6},{7,8,0}};
 
 				while(mvObjeto.banderaGeneral==false){
 					Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(pilaDeNodosExpandir.get(0).getPuzzle(),tamañoGame,sol);
@@ -126,7 +126,6 @@ public class GameNpuzzle {
 					}
 					for (int i=0; i<matricesExpandir.size(); i++){
 						nodoGenerado = Arbol.nuevoArbol(pilaDeNodosExpandir.get(0), matricesExpandir.get(i));
-
 						mvObjeto.historial.add(mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame));
 						pilaDeNodosExpandir.addElement(nodoGenerado);
 						arb = new Arbol(nodoGenerado);
@@ -134,30 +133,22 @@ public class GameNpuzzle {
 					}
 
 					pilaDeNodosExpandir.remove(0);
+
 				}
 
 
 				Node n=pilaDeNodosExpandir.get(0);
 				nodoGenerado = pilaDeNodosExpandir.get(0);
+				int contador = n.getProfundidad(n);
+				for (int i=0; i<contador; i++){
 
-				for (int j=0; j<tamañoGame; j++){
-					for(int k=0; k<tamañoGame; k++){
-						System.out.print(nodoGenerado.getPuzzle()[j][k]+" ");
-					}
-					System.out.println();
-				}
-
-				System.out.println();
-
-
-				for (int i=0; i<=n.getProfundidad(n); i++){
-					n = n.getPadre();
 					for (int j=0; j<tamañoGame; j++){
 						for(int k=0; k<tamañoGame; k++){
 							System.out.print(n.getPuzzle()[j][k]+" ");
 						}
 						System.out.println();
 					}
+					n = n.getPadre();
 
 					System.out.println();
 				}

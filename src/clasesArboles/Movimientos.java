@@ -11,7 +11,7 @@ public class Movimientos {
 	Vector<int[][]> matExpandor = new Vector<>();
 	public Vector<String> historial = new Vector<>();
 
-    boolean banderaDerecha = true, banderaIzquierda = true, banderaAbajo = true, banderaArriba = true;
+
 	public boolean banderaGeneral=false;
 
 
@@ -19,8 +19,15 @@ public class Movimientos {
 
 
     public Vector<int[][]> regresaVector(int game[][], int tamañoGame, int [][]gameResuelto){
+		boolean banderaDerecha = true, banderaIzquierda = true, banderaAbajo = true, banderaArriba = true;
 
-
+		/*for(int i=0; i<tamañoGame; i++){
+			for (int j=0; j<tamañoGame; j++){
+				System.out.print(game[i][j]+" ");
+			}
+			System.out.println();
+		}
+		System.out.println();*/
 
 		if(convierteMatrizString(game,tamañoGame).equals(convierteMatrizString(gameResuelto, tamañoGame))){
 			banderaGeneral = true;
@@ -359,7 +366,6 @@ public class Movimientos {
             //Hacer movimientos del centro
             //[y!=0, x!=0] = [y, x-1],[y, x+1],[y-1, x],[y+1, x]
         	//Mueve izquierda, mueve derecha, mueve abajo. mueve arriba
-
 			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo,tamañoGame),tamañoGame);
 			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
 			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda,tamañoGame), tamañoGame);
