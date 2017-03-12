@@ -5,18 +5,31 @@ import java.util.Vector;
 /**
  * Created by jeather on 8/03/17.
  */
+
 public class Movimientos {
 
 	Vector<int[][]> matExpandor = new Vector<>();
-    boolean bandera1 = true, bandera2 = true, bandera3 = true, bandera4 = true;
-	//Constructror
-    public Vector<int[][]> regresaVector(int game[][], int tamañoGame){
-        matExpandor.removeAllElements();
-    	
+	public Vector<String> historial = new Vector<>();
+
+    boolean banderaDerecha = true, banderaIzquierda = true, banderaAbajo = true, banderaArriba = true;
+	public boolean banderaGeneral=false;
+
+
+
+
+
+    public Vector<int[][]> regresaVector(int game[][], int tamañoGame, int [][]gameResuelto){
+
+
+
+		if(convierteMatrizString(game,tamañoGame).equals(convierteMatrizString(gameResuelto, tamañoGame))){
+			banderaGeneral = true;
+		}else{
+		matExpandor.removeAllElements();
         int posicionX = 0;
         int posicionY = 0;
-        
-        //For que me ecnuentra posicion cero 
+
+        //For que me ecnuentra posicion cero
         for(int i=0; i<tamañoGame; i++){
             for(int j=0; j<tamañoGame; j++){
                 //Localiza la posición nula del juego
@@ -27,74 +40,319 @@ public class Movimientos {
             }
         }
 
+		//Copia de matrices dependiendo del giro
+		int [][] matDerecha = nuevaMatriz(game, tamañoGame);
+		int [][] matAbajo = nuevaMatriz(game, tamañoGame);
+		int [][] matArriba = nuevaMatriz(game, tamañoGame);
+		int [][] matIzquierda = nuevaMatriz(game, tamañoGame);
+
+		//Matrices voletadas dependiendo del gito
+		String matGiradaDerecha;
+		String matGiradaAbajo;
+		String matGiradaArriba;
+		String matGiradaIzquierda;
+
 
         ////////////////////Verifica en que parte se encuentra el cero////////////////////////////////////
 
         //////Esquina superior Izquierda
         if(posicionY==0 && posicionX==0){
         	//Mueve derecha, mueve abajo
-        	int [][] matDerecha = nuevaMatriz(game, tamañoGame);
-        	int [][] matAbajo = nuevaMatriz(game, tamañoGame);
-        	
-        	String matGiradaDerecha = convierteMatrizString(mueveDerecha(game, tamañoGame), tamañoGame);
-        	String matGiradaAbajo = convierteMatrizString(mueveAbajo(game, tamañoGame), tamañoGame);
-        	
-        	for (int i = 0; i <historial.size(); i++) {
-				if(historial.getElementAt(i)==matGiradaDerecha){
-					//bandera 1 false
+			//[y0,x0] = [y,x+1],[y+1,x]
+			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha, tamañoGame), tamañoGame);
+			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo, tamañoGame), tamañoGame);
+
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaDerecha)){
+					banderaDerecha = false;
 				}
 			}
-        	
+
         	for (int i = 0; i <historial.size(); i++) {
-				if(historial.getElementAt(i)==matGiradaAbajo){
-					//bandera 2 false
+				if(historial.get(i).equals(matGiradaAbajo)){
+					banderaAbajo = false;
 				}
 			}
-        	
-        	if(bandera1){
-        		matExpandor.add(mueveDerecha(game, tamañoGame));
+
+        	if(banderaDerecha){
+        		matExpandor.add(matDerecha);
+				historial.add(matGiradaDerecha);
+
         	}
-        	
-        	if(bandera2){
-        		matExpandor.add(mueveAbajo(game, tamañoGame));
-        	}
-            //[y0,x0] = [y,x+1],[y+1,x]
+
+        	if(banderaAbajo){
+        		matExpandor.add(matAbajo);
+				historial.add(matGiradaAbajo);
+			}
+
         }else
+
         //////Esquina superior derecha
         if(posicionY==0 && posicionX==tamañoGame-1){
            //Mueve izquierda, mueve abajo
         	//[y0,xn-1] = [y,x-1],[y+1,x]
+			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo, tamañoGame), tamañoGame);
+     		matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda, tamañoGame), tamañoGame);
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaIzquierda)){
+					banderaIzquierda = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaAbajo)){
+					banderaAbajo = false;
+				}
+			}
+
+			if(banderaIzquierda){
+				matExpandor.add(matIzquierda);
+				historial.add(matGiradaIzquierda);
+			}
+
+			if(banderaAbajo){
+				matExpandor.add(matAbajo);
+				historial.add(matGiradaAbajo);
+			}
         }else
+
         //Esquina inferior derecha
         if(posicionY==tamañoGame-1 && posicionX==tamañoGame-1){
             //Mueve arriba, izquierda
         	//[yn-1,xn-1] = [y-1,x],[y,x-1]
+			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
+			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda, tamañoGame), tamañoGame);
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaIzquierda)){
+					banderaIzquierda = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaArriba)){
+					banderaArriba = false;
+				}
+			}
+
+			if(banderaIzquierda){
+				matExpandor.add(matIzquierda);
+				historial.add(matGiradaIzquierda);
+			}
+
+			if(banderaArriba){
+				matExpandor.add(matArriba);
+				historial.add(matGiradaArriba);
+			}
+
         }else
+
         //////Esquina inferior izquierda
         if(posicionY==tamañoGame-1 && posicionX==0){
         	//Mueve arriba, mueve derecha
             //[yn-1,x0] = [y-1,x],[y,x+1]
+			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
+			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha, tamañoGame), tamañoGame);
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaDerecha)){
+					banderaDerecha = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaArriba)){
+					banderaArriba = false;
+				}
+			}
+
+			if(banderaDerecha){
+				matExpandor.add(matDerecha);
+				historial.add(matGiradaDerecha);
+			}
+
+			if(banderaArriba){
+				matExpandor.add(matArriba);
+				historial.add(matGiradaArriba);
+			}
         }else
 
         //Horilla superior
         if(posicionY==0 && posicionX !=tamañoGame-1){
         	//Mueve derecha, mueve izquierda, mueve abajo
             //[y, x]=[y, x+1],[y, x-1],[y+1, x]
+
+			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha,tamañoGame),tamañoGame);
+			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda, tamañoGame), tamañoGame);
+			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo,tamañoGame), tamañoGame);
+
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaDerecha)){
+					banderaDerecha = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaAbajo)){
+					banderaAbajo = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaIzquierda)){
+					banderaIzquierda = false;
+				}
+			}
+
+			if(banderaAbajo){
+				matExpandor.add(matAbajo);
+				historial.add(matGiradaAbajo);
+			}
+			if(banderaDerecha){
+				matExpandor.add(matDerecha);
+				historial.add(matGiradaDerecha);
+			}
+
+			if(banderaIzquierda){
+				matExpandor.add(matIzquierda);
+				historial.add(matGiradaIzquierda);
+			}
+
+
+
+
+
         }else
         //horilla izquierda
         if(posicionX==0 && posicionY!=0 && posicionY!=tamañoGame-1){
             //[y, x]=[y, x+1],[y+1, x],[y-1, x]
         	//Mueve derecha, mueve abajo, mueve arriba
+
+			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha,tamañoGame),tamañoGame);
+			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
+			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo,tamañoGame), tamañoGame);
+
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaDerecha)){
+					banderaDerecha = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaAbajo)){
+					banderaAbajo = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaArriba)){
+					banderaArriba = false;
+				}
+			}
+
+			if(banderaAbajo){
+				matExpandor.add(matAbajo);
+				historial.add(matGiradaAbajo);
+			}
+			if(banderaDerecha){
+				matExpandor.add(matDerecha);
+				historial.add(matGiradaDerecha);
+			}
+
+			if(banderaArriba){
+				matExpandor.add(matArriba);
+				historial.add(matGiradaArriba);
+			}
+
         }else
         //horilla inferior
         if(posicionY==tamañoGame-1 && posicionX!=0 && posicionX!=tamañoGame-1){
             //[y, x]=[y, x+1],[y, x-1],[y-1, x]
         	//Mueve derecha, mueve izquierda, mueve arriba
+
+			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha,tamañoGame),tamañoGame);
+			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
+			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda,tamañoGame), tamañoGame);
+
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaDerecha)){
+					banderaDerecha = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaIzquierda)){
+					banderaIzquierda = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaArriba)){
+					banderaArriba = false;
+				}
+			}
+
+			if(banderaIzquierda){
+				matExpandor.add(matIzquierda);
+				historial.add(matGiradaIzquierda);
+			}
+			if(banderaDerecha){
+				matExpandor.add(matDerecha);
+				historial.add(matGiradaDerecha);
+			}
+
+			if(banderaArriba){
+				matExpandor.add(matArriba);
+				historial.add(matGiradaArriba);
+			}
+
         }else
         //horilla derecha
         if (posicionY!=0 && posicionY!=tamañoGame-1 && posicionX==tamañoGame-1){
             //[y, x]=[y, x-1],[y-1, x],[y+1, x]
         	//Mueve izquierda, mueve arriba, mueve abajo
+
+			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo,tamañoGame),tamañoGame);
+			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
+			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda,tamañoGame), tamañoGame);
+
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaAbajo)){
+					banderaAbajo = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaIzquierda)){
+					banderaIzquierda = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaArriba)){
+					banderaArriba = false;
+				}
+			}
+
+			if(banderaIzquierda){
+				matExpandor.add(matIzquierda);
+				historial.add(matGiradaIzquierda);
+			}
+			if(banderaAbajo){
+				matExpandor.add(matDerecha);
+				historial.add(matGiradaAbajo);
+			}
+
+			if(banderaArriba){
+				matExpandor.add(matArriba);
+				historial.add(matGiradaArriba);
+			}
         }
 
         else{
@@ -102,8 +360,59 @@ public class Movimientos {
             //[y!=0, x!=0] = [y, x-1],[y, x+1],[y-1, x],[y+1, x]
         	//Mueve izquierda, mueve derecha, mueve abajo. mueve arriba
 
+			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo,tamañoGame),tamañoGame);
+			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
+			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda,tamañoGame), tamañoGame);
+			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha,tamañoGame),tamañoGame);
+
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaAbajo)){
+					banderaAbajo = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaIzquierda)){
+					banderaIzquierda = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+				if(historial.get(i).equals(matGiradaArriba)){
+					banderaArriba = false;
+				}
+			}
+
+			for (int i = 0; i <historial.size(); i++) {
+
+				if(historial.get(i).equals(matGiradaDerecha)){
+					banderaDerecha = false;
+				}
+			}
+
+			if(banderaIzquierda){
+				matExpandor.add(matIzquierda);
+				historial.add(matGiradaIzquierda);
+			}
+			if(banderaAbajo){
+				matExpandor.add(matAbajo);
+				historial.add(matGiradaAbajo);
+			}
+
+			if(banderaArriba){
+				matExpandor.add(matArriba);
+				historial.add(matGiradaArriba);
+			}
+			if(banderaDerecha){
+				matExpandor.add(matDerecha);
+				historial.add(matGiradaDerecha);
+			}
+
         }
-        return matExpandor;
+
+        }
+		return matExpandor;
 
     }
     
