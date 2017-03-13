@@ -98,7 +98,7 @@ public class GameNpuzzle {
                         }
                         defaultTableModel.addRow(rowAddTable);
                     }
-					int [][] game = {{8,7,4},{3,2,0},{6,5,1}};
+					int [][] game = {{3,2,6},{5,7,4},{8,0,1}};
 					//874320651
 					nodoGenerado = Arbol.nuevoArbol(null,game);
 					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
@@ -137,9 +137,18 @@ public class GameNpuzzle {
 					pilaDeNodosExpandir.remove(0);
 
 				}
-
-
-				Node n=pilaDeNodosExpandir.get(0);
+                nodoGenerado = pilaDeNodosExpandir.get(0);
+                while(nodoGenerado!=null){
+                    for (int j=0; j<tamañoGame; j++){
+                        for(int k=0; k<tamañoGame; k++){
+                            System.out.print(nodoGenerado.getPuzzle()[j][k]+" ");
+                        }
+                        System.out.println();
+                    }
+                    nodoGenerado=nodoGenerado.getProfundidad2(nodoGenerado);
+                    System.out.println();
+                }
+				/*Node n=pilaDeNodosExpandir.get(0);
 				nodoGenerado = pilaDeNodosExpandir.get(0);
 				int contador = n.getProfundidad(n);
 				for (int i=0; i<contador; i++){
@@ -153,7 +162,7 @@ public class GameNpuzzle {
 					n = n.getPadre();
 
 					System.out.println();
-				}
+				}*/
 
 
 
@@ -184,8 +193,21 @@ public class GameNpuzzle {
 					}
 				}
 
-                int contador = aux.getProfundidad(aux);
-                System.out.println("Se encontro solución con: " + contador + " pasos");
+                int contador=0;
+                while(aux!=null){
+					for (int j=0; j<tamañoGame; j++){
+						for(int k=0; k<tamañoGame; k++){
+							System.out.print(aux.getPuzzle()[j][k]+" ");
+						}
+						System.out.println();
+					}
+                    contador++;
+					aux=aux.getProfundidad2(aux);
+					System.out.println();
+				}
+
+                System.out.println("Numero de pasos: " + contador);
+
             }
 		});
 

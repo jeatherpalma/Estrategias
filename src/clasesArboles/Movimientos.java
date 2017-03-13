@@ -33,6 +33,7 @@ public class Movimientos {
 
 		if(convierteMatrizString(game,tamañoGame).equals(convierteMatrizString(gameResuelto, tamañoGame))){
 			banderaGeneral = true;
+
 		}else{
 		matExpandor.removeAllElements();
         int posicionX = 0;
@@ -45,7 +46,10 @@ public class Movimientos {
                 if(game[i][j]==0){
                     posicionX = j;
                     posicionY = i;
+
+                    i=j=tamañoGame;
                 }
+
             }
         }
 
@@ -75,12 +79,14 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaDerecha)){
 					banderaDerecha = false;
+					break;
 				}
 			}
 
         	for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaAbajo)){
 					banderaAbajo = false;
+					break;
 				}
 			}
 
@@ -107,14 +113,17 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaIzquierda)){
 					banderaIzquierda = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaAbajo)){
 					banderaAbajo = false;
+					break;
 				}
 			}
+
 
 			if(banderaIzquierda){
 				matExpandor.add(matIzquierda);
@@ -137,12 +146,14 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaIzquierda)){
 					banderaIzquierda = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaArriba)){
 					banderaArriba = false;
+					break;
 				}
 			}
 
@@ -168,12 +179,14 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaDerecha)){
 					banderaDerecha = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaArriba)){
 					banderaArriba = false;
+					break;
 				}
 			}
 
@@ -201,18 +214,21 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaDerecha)){
 					banderaDerecha = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaAbajo)){
 					banderaAbajo = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaIzquierda)){
 					banderaIzquierda = false;
+					break;
 				}
 			}
 
@@ -248,18 +264,21 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaDerecha)){
 					banderaDerecha = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaAbajo)){
 					banderaAbajo = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaArriba)){
 					banderaArriba = false;
+					break;
 				}
 			}
 
@@ -291,29 +310,34 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaDerecha)){
 					banderaDerecha = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaIzquierda)){
 					banderaIzquierda = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaArriba)){
 					banderaArriba = false;
+					break;
 				}
 			}
 
-			if(banderaIzquierda){
-				matExpandor.add(matIzquierda);
-				historial.add(matGiradaIzquierda);
-			}
+
 			if(banderaDerecha){
 				matExpandor.add(matDerecha);
 				historial.add(matGiradaDerecha);
 			}
+
+            if(banderaIzquierda){
+                matExpandor.add(matIzquierda);
+                historial.add(matGiradaIzquierda);
+            }
 
 			if(banderaArriba){
 				matExpandor.add(matArriba);
@@ -334,18 +358,21 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaAbajo)){
 					banderaAbajo = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaIzquierda)){
 					banderaIzquierda = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaArriba)){
 					banderaArriba = false;
+					break;
 				}
 			}
 
@@ -377,18 +404,21 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaAbajo)){
 					banderaAbajo = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaIzquierda)){
 					banderaIzquierda = false;
+					break;
 				}
 			}
 
 			for (int i = 0; i <historial.size(); i++) {
 				if(historial.get(i).equals(matGiradaArriba)){
 					banderaArriba = false;
+					break;
 				}
 			}
 
@@ -396,6 +426,7 @@ public class Movimientos {
 
 				if(historial.get(i).equals(matGiradaDerecha)){
 					banderaDerecha = false;
+					break;
 				}
 			}
 

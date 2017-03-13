@@ -30,6 +30,13 @@ public class Node {
 		}
 			return profundidad;
 	}
+
+	public Node getProfundidad2(Node n){
+		if(n!=null){
+			return n.getPadre();
+		}
+		return n;
+	}
 	
 	
 	//Regresa el puzzle del nodo
