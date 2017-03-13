@@ -25,6 +25,7 @@ public class GameNpuzzle {
 	private JTable jTableGame;
 	private JScrollPane jScrollPaneGame;
 	private JButton jButtonprimeroEnAnchura;
+	private JButton jButtonEnProfundidad;
 	////////////////////////////////////
 
 	////////Fuentes para los labels/////
@@ -97,7 +98,8 @@ public class GameNpuzzle {
                         }
                         defaultTableModel.addRow(rowAddTable);
                     }
-					int [][] game = {{8,3,0},{6,7,1},{4,2,5}};
+					int [][] game = {{8,7,4},{3,2,0},{6,5,1}};
+					//874320651
 					nodoGenerado = Arbol.nuevoArbol(null,game);
 					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
 					pilaDeNodosExpandir.addElement(nodoGenerado);
@@ -116,8 +118,8 @@ public class GameNpuzzle {
 		jButtonprimeroEnAnchura.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int [][] game = {{8,3,0},{6,7,1},{4,2,5}};
-				int [][]sol = {{1,2,3},{4,5,6},{7,8,0}};
+				int [][] game = {{7,0,1},{2,4,8},{6,3,5}};
+				int [][]sol = {{0,1,2},{3,4,5},{6,7,8}};
 
 				while(mvObjeto.banderaGeneral==false){
 					Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(pilaDeNodosExpandir.get(0).getPuzzle(),tamañoGame,sol);
@@ -158,6 +160,34 @@ public class GameNpuzzle {
 			}
 		});
 
+		/************************En profundidad********************************/
+		jButtonEnProfundidad = new JButton("Profundidad");
+		jButtonEnProfundidad.setBounds(10,180,180,30);
+		jButtonEnProfundidad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int [][]sol = {{0,1,2},{3,4,5},{6,7,8}};
+				//Forma de pila el vector de nodos a expandir
+                Node aux = null;
+				while(mvObjeto.banderaGeneral==false){
+                     aux = pilaDeNodosExpandir.remove(pilaDeNodosExpandir.size()-1);
+					Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(aux.getPuzzle(),tamañoGame,sol);
+					if(mvObjeto.banderaGeneral==true){
+						break;
+					}
+					for (int i=0; i<matricesExpandir.size(); i++){
+						nodoGenerado = Arbol.nuevoArbol(aux, matricesExpandir.get(i));
+						mvObjeto.historial.add(mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame));
+						pilaDeNodosExpandir.addElement(nodoGenerado);
+						arb = new Arbol(nodoGenerado);
+
+					}
+				}
+
+                int contador = aux.getProfundidad(aux);
+                System.out.println("Se encontro solución con: " + contador + " pasos");
+            }
+		});
 
 		/**********************************************************************/
 
@@ -168,6 +198,7 @@ public class GameNpuzzle {
 		jFramePrincipal.add(jTextFieldCantidadElementos);
 		jFramePrincipal.add(jButtonGenerarJuego);
 		jFramePrincipal.add(jButtonprimeroEnAnchura);
+		jFramePrincipal.add(jButtonEnProfundidad);
 		/*****************************************************************/
 
 

@@ -10,7 +10,7 @@ public class Movimientos {
 
 	Vector<int[][]> matExpandor = new Vector<>();
 	public Vector<String> historial = new Vector<>();
-
+	int contador = 0;
 
 	public boolean banderaGeneral=false;
 
@@ -21,6 +21,8 @@ public class Movimientos {
     public Vector<int[][]> regresaVector(int game[][], int tamañoGame, int [][]gameResuelto){
 		boolean banderaDerecha = true, banderaIzquierda = true, banderaAbajo = true, banderaArriba = true;
 
+        contador ++;
+		System.out.println(contador);
 		/*for(int i=0; i<tamañoGame; i++){
 			for (int j=0; j<tamañoGame; j++){
 				System.out.print(game[i][j]+" ");
