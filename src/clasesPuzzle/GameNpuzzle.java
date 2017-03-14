@@ -28,6 +28,10 @@ public class GameNpuzzle {
 	private JButton jButtonEnProfundidad;
 	////////////////////////////////////
 
+	//Objetos para el area de impresión
+	private JTextArea jTextAreaResultado;
+	private JScrollPane jScrollPaneResultado;
+
 	////////Fuentes para los labels/////
 	Font fontTitutlos = new Font("Arial", Font.BOLD,25);
 	Font fontReferencias = new Font("Arial", Font.BOLD, 15);
@@ -37,6 +41,9 @@ public class GameNpuzzle {
 	Vector<Node> pilaDeNodosExpandir = new Vector<>();
 	Node nodoGenerado = null;
 	Arbol arb;
+
+	//Vector de matrices a expandir
+	Vector<int [][]> trayectoria = new Vector<>();
 
 	//Objeto de movimientos
 	Movimientos mvObjeto = new Movimientos();
@@ -77,9 +84,9 @@ public class GameNpuzzle {
 		jButtonprimeroEnAnchura.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int [][] game = {{7,0,1},{2,4,8},{6,3,5}};
-				int [][]sol = {{0,1,2},{3,4,5},{6,7,8}};
 
+				int [][]sol = {{0,1,2},{3,4,5},{6,7,8}};
+				trayectoria = new Vector<>();
 				while(mvObjeto.banderaGeneral==false){
 					Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(pilaDeNodosExpandir.get(0).getPuzzle(),tamañoGame,sol);
 					if(mvObjeto.banderaGeneral==true){
@@ -97,34 +104,28 @@ public class GameNpuzzle {
 
 				}
 				nodoGenerado = pilaDeNodosExpandir.get(0);
+				int contador=0;
 				while(nodoGenerado!=null){
-					for (int j=0; j<tamañoGame; j++){
-						for(int k=0; k<tamañoGame; k++){
-							System.out.print(nodoGenerado.getPuzzle()[j][k]+" ");
-						}
-						System.out.println();
-					}
+					contador++;
+					trayectoria.add(nodoGenerado.getPuzzle());
 					nodoGenerado=nodoGenerado.getProfundidad2(nodoGenerado);
-					System.out.println();
 				}
-				/*Node n=pilaDeNodosExpandir.get(0);
-				nodoGenerado = pilaDeNodosExpandir.get(0);
-				int contador = n.getProfundidad(n);
-				for (int i=0; i<contador; i++){
 
-					for (int j=0; j<tamañoGame; j++){
+				jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
+				jTextAreaResultado.append("\n");
+				jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
+				jTextAreaResultado.append("\n");
+				for (int i=trayectoria.size()-1; i>=0; i--)
+				{
+					for(int j=0; j<tamañoGame; j++)
+					{
 						for(int k=0; k<tamañoGame; k++){
-							System.out.print(n.getPuzzle()[j][k]+" ");
+							jTextAreaResultado.append(trayectoria.get(i)[j][k]+" ");
 						}
-						System.out.println();
+						jTextAreaResultado.append("\n");
 					}
-					n = n.getPadre();
-
-					System.out.println();
-				}*/
-
-
-
+					jTextAreaResultado.append("\n");
+				}
 			}
 		});
 
@@ -155,18 +156,27 @@ public class GameNpuzzle {
 
 				int contador=0;
 				while(aux!=null){
-					for (int j=0; j<tamañoGame; j++){
-						for(int k=0; k<tamañoGame; k++){
-							System.out.print(aux.getPuzzle()[j][k]+" ");
-						}
-						System.out.println();
-					}
 					contador++;
+					trayectoria.add(aux.getPuzzle());
 					aux=aux.getProfundidad2(aux);
-					System.out.println();
+
 				}
 
-				System.out.println("Numero de pasos: " + contador);
+				jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
+				jTextAreaResultado.append("\n");
+				jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
+				jTextAreaResultado.append("\n");
+				for (int i=trayectoria.size()-1; i>=0; i--)
+				{
+					for(int j=0; j<tamañoGame; j++)
+					{
+						for(int k=0; k<tamañoGame; k++){
+							jTextAreaResultado.append(trayectoria.get(i)[j][k]+" ");
+						}
+						jTextAreaResultado.append("\n");
+					}
+					jTextAreaResultado.append("\n");
+				}
 
 			}
 		});
@@ -180,6 +190,7 @@ public class GameNpuzzle {
                 try {
 					jButtonEnProfundidad.setEnabled(true);
 					jButtonprimeroEnAnchura.setEnabled(true);
+					jTextAreaResultado.append("");
                     if (jTextFieldCantidadElementos.getText().equals("")) {
                         JOptionPane.showMessageDialog(null, "Error introduzca una cantidad",
                                 "Error de entrada", JOptionPane.ERROR_MESSAGE);
@@ -188,7 +199,7 @@ public class GameNpuzzle {
 
                     DefaultTableModel defaultTableModel = new DefaultTableModel(0, tamañoGame);
                     jTableGame = new JTable(defaultTableModel);
-                    jTableGame.setFont(new Font("Arial",Font.BOLD,30));
+                    jTableGame.setFont(new Font("Arial",Font.BOLD,20));
 					jTableGame.getCellRenderer(0,0);
                     jScrollPaneGame = new JScrollPane(jTableGame);
                     jScrollPaneGame.setBounds(200,70,200,200);
@@ -202,9 +213,9 @@ public class GameNpuzzle {
                         }
                         defaultTableModel.addRow(rowAddTable);
                     }
-					int [][] game = {{3,2,6},{5,7,4},{8,0,1}};
+					int [][] game = {{7,0,1},{2,4,8},{6,3,5}};
 					//874320651
-					nodoGenerado = Arbol.nuevoArbol(null,matrizGame);
+					nodoGenerado = Arbol.nuevoArbol(null,game);
 					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
 					pilaDeNodosExpandir.addElement(nodoGenerado);
 
@@ -215,6 +226,10 @@ public class GameNpuzzle {
 
 			}
 		});
+
+		jTextAreaResultado = new JTextArea();
+		jScrollPaneResultado = new JScrollPane(jTextAreaResultado);
+		jScrollPaneResultado.setBounds(120,290,400,300);
 
 
 		/**********************************************************************/
@@ -227,18 +242,20 @@ public class GameNpuzzle {
 		jFramePrincipal.add(jButtonGenerarJuego);
 		jFramePrincipal.add(jButtonprimeroEnAnchura);
 		jFramePrincipal.add(jButtonEnProfundidad);
+		jFramePrincipal.add(jScrollPaneResultado);
 		/*****************************************************************/
 
 
-		jFramePrincipal.setLocation(100,100);
+		jFramePrincipal.setLocationRelativeTo(null);
 		jFramePrincipal.setVisible(true);
 	}
 
 
 	public int[][] generaJuego(int tamaño){
 
-
+		//Matriz en la que se genera el juego
 		int matriz[][] = new int[tamaño][tamaño];
+		//Bandera que controla el ciclo para la determinación de si es resolvible
 		boolean ban = true;
 		int inversiones = 0;
 		while(ban) {
@@ -261,9 +278,11 @@ public class GameNpuzzle {
 				}
 			}
 
+			//Gurada todos los elementos a excepcion del cero para comprobar si el juego es resolvible
 			for (int i = 0; i < vector.size(); i++) {
 				for (int j = i + 1; j < vector.size(); j++) {
 					if (vector.get(i) > vector.get(j)) {
+						//AUmenta el número de inversiones si se encontro alguna
 						inversiones++;
 					}
 				}
