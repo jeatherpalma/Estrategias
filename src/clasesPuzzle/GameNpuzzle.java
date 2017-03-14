@@ -70,51 +70,10 @@ public class GameNpuzzle {
 		jTextFieldCantidadElementos.setBounds(160,105,30,30);
         jTextFieldCantidadElementos.setFont(fontReferencias);
 
-
-        //Boton que genera el juego
-		jButtonGenerarJuego = new JButton("Generar puzzle");
-		jButtonGenerarJuego.setBounds(10,70,180,30);
-		jButtonGenerarJuego.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-                try {
-                    if (jTextFieldCantidadElementos.getText().equals("")) {
-                        JOptionPane.showMessageDialog(null, "Error introduzca una cantidad",
-                                "Error de entrada", JOptionPane.ERROR_MESSAGE);
-                    }
-                    tamañoGame = Integer.parseInt(jTextFieldCantidadElementos.getText());
-
-                    DefaultTableModel defaultTableModel = new DefaultTableModel(0, tamañoGame);
-                    jTableGame = new JTable(defaultTableModel);
-                    jTableGame.setFont(fontReferencias);
-                    jScrollPaneGame = new JScrollPane(jTableGame);
-                    jScrollPaneGame.setBounds(200,70,450,200);
-                    jFramePrincipal.add(jScrollPaneGame);
-
-                    matrizGame = generaJuego(tamañoGame);
-                    for (int i=0; i<tamañoGame; i++){
-                        Vector rowAddTable = new Vector();
-                        for (int j=0; j<tamañoGame; j++){
-                            rowAddTable.add(matrizGame[i][j]);
-                        }
-                        defaultTableModel.addRow(rowAddTable);
-                    }
-					int [][] game = {{3,2,6},{5,7,4},{8,0,1}};
-					//874320651
-					nodoGenerado = Arbol.nuevoArbol(null,game);
-					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
-					pilaDeNodosExpandir.addElement(nodoGenerado);
-
-                }catch (NumberFormatException ed){
-
-                }
-
-
-			}
-		});
-
 		/****************************Boton primero en anchura************************/
 		jButtonprimeroEnAnchura = new JButton("Anchura");
 		jButtonprimeroEnAnchura.setBounds(10,140,180,30);
+		jButtonprimeroEnAnchura.setEnabled(false);
 		jButtonprimeroEnAnchura.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -137,17 +96,17 @@ public class GameNpuzzle {
 					pilaDeNodosExpandir.remove(0);
 
 				}
-                nodoGenerado = pilaDeNodosExpandir.get(0);
-                while(nodoGenerado!=null){
-                    for (int j=0; j<tamañoGame; j++){
-                        for(int k=0; k<tamañoGame; k++){
-                            System.out.print(nodoGenerado.getPuzzle()[j][k]+" ");
-                        }
-                        System.out.println();
-                    }
-                    nodoGenerado=nodoGenerado.getProfundidad2(nodoGenerado);
-                    System.out.println();
-                }
+				nodoGenerado = pilaDeNodosExpandir.get(0);
+				while(nodoGenerado!=null){
+					for (int j=0; j<tamañoGame; j++){
+						for(int k=0; k<tamañoGame; k++){
+							System.out.print(nodoGenerado.getPuzzle()[j][k]+" ");
+						}
+						System.out.println();
+					}
+					nodoGenerado=nodoGenerado.getProfundidad2(nodoGenerado);
+					System.out.println();
+				}
 				/*Node n=pilaDeNodosExpandir.get(0);
 				nodoGenerado = pilaDeNodosExpandir.get(0);
 				int contador = n.getProfundidad(n);
@@ -172,14 +131,15 @@ public class GameNpuzzle {
 		/************************En profundidad********************************/
 		jButtonEnProfundidad = new JButton("Profundidad");
 		jButtonEnProfundidad.setBounds(10,180,180,30);
+		jButtonEnProfundidad.setEnabled(false);
 		jButtonEnProfundidad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int [][]sol = {{0,1,2},{3,4,5},{6,7,8}};
 				//Forma de pila el vector de nodos a expandir
-                Node aux = null;
+				Node aux = null;
 				while(mvObjeto.banderaGeneral==false){
-                     aux = pilaDeNodosExpandir.remove(pilaDeNodosExpandir.size()-1);
+					aux = pilaDeNodosExpandir.remove(pilaDeNodosExpandir.size()-1);
 					Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(aux.getPuzzle(),tamañoGame,sol);
 					if(mvObjeto.banderaGeneral==true){
 						break;
@@ -193,23 +153,69 @@ public class GameNpuzzle {
 					}
 				}
 
-                int contador=0;
-                while(aux!=null){
+				int contador=0;
+				while(aux!=null){
 					for (int j=0; j<tamañoGame; j++){
 						for(int k=0; k<tamañoGame; k++){
 							System.out.print(aux.getPuzzle()[j][k]+" ");
 						}
 						System.out.println();
 					}
-                    contador++;
+					contador++;
 					aux=aux.getProfundidad2(aux);
 					System.out.println();
 				}
 
-                System.out.println("Numero de pasos: " + contador);
+				System.out.println("Numero de pasos: " + contador);
 
-            }
+			}
 		});
+
+
+		//Boton que genera el juego
+		jButtonGenerarJuego = new JButton("Generar puzzle");
+		jButtonGenerarJuego.setBounds(10,70,180,30);
+		jButtonGenerarJuego.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+                try {
+					jButtonEnProfundidad.setEnabled(true);
+					jButtonprimeroEnAnchura.setEnabled(true);
+                    if (jTextFieldCantidadElementos.getText().equals("")) {
+                        JOptionPane.showMessageDialog(null, "Error introduzca una cantidad",
+                                "Error de entrada", JOptionPane.ERROR_MESSAGE);
+                    }
+                    tamañoGame = Integer.parseInt(jTextFieldCantidadElementos.getText());
+
+                    DefaultTableModel defaultTableModel = new DefaultTableModel(0, tamañoGame);
+                    jTableGame = new JTable(defaultTableModel);
+                    jTableGame.setFont(new Font("Arial",Font.BOLD,30));
+					jTableGame.getCellRenderer(0,0);
+                    jScrollPaneGame = new JScrollPane(jTableGame);
+                    jScrollPaneGame.setBounds(200,70,200,200);
+                    jFramePrincipal.add(jScrollPaneGame);
+
+                    matrizGame = generaJuego(tamañoGame);
+                    for (int i=0; i<tamañoGame; i++){
+                        Vector rowAddTable = new Vector();
+                        for (int j=0; j<tamañoGame; j++){
+                            rowAddTable.add(matrizGame[i][j]);
+                        }
+                        defaultTableModel.addRow(rowAddTable);
+                    }
+					int [][] game = {{3,2,6},{5,7,4},{8,0,1}};
+					//874320651
+					nodoGenerado = Arbol.nuevoArbol(null,matrizGame);
+					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
+					pilaDeNodosExpandir.addElement(nodoGenerado);
+
+                }catch (NumberFormatException ed){
+
+                }
+
+
+			}
+		});
+
 
 		/**********************************************************************/
 
@@ -231,23 +237,43 @@ public class GameNpuzzle {
 
 	public int[][] generaJuego(int tamaño){
 
-		//Variable que guarda el tamaño del juego
-		int tamañoGame = tamaño * tamaño;
 
-		//Genera las piezas de 1 al tamaño del puzzle
-		for (int i = 0; i < tamañoGame; i++) {
-			piezasJuego.addElement(i);
+		int matriz[][] = new int[tamaño][tamaño];
+		boolean ban = true;
+		int inversiones = 0;
+		while(ban) {
+
+			inversiones = 0;
+			//Genera las piezas de 1 al tamaño del puzzle
+			for (int i = 0; i < (tamañoGame * tamañoGame); i++) {
+				piezasJuego.addElement(i);
+			}
+			//Genera un juego aleatoriamente
+			Vector<Integer> vector = new Vector<>();
+			for (int i = 0; i < tamaño; i++) {
+				for (int j = 0; j < tamaño; j++) {
+					int numeroAleatorio = (int) (Math.random() * piezasJuego.size());
+					matriz[i][j] = piezasJuego.get(numeroAleatorio);
+					int numero = Integer.parseInt(piezasJuego.remove(numeroAleatorio).toString());
+					if (numero != 0) {
+						vector.add(numero);
+					}
+				}
+			}
+
+			for (int i = 0; i < vector.size(); i++) {
+				for (int j = i + 1; j < vector.size(); j++) {
+					if (vector.get(i) > vector.get(j)) {
+						inversiones++;
+					}
+				}
+			}
+			if (inversiones % 2 == 0) {
+				ban = false;
+			}
+
+
 		}
-		//Genera un juego aleatoriamente
-		int matriz [][] = new int[tamaño][tamaño];
-		for (int i=0; i<tamaño; i++){
-            for (int j=0; j<tamaño; j++){
-                int numeroAleatorio = (int) (Math.random() * piezasJuego.size());
-                matriz[i][j] = piezasJuego.get(numeroAleatorio);
-                piezasJuego.removeElementAt(numeroAleatorio);
-            }
-        }
-
         return matriz;
 	}
 }
