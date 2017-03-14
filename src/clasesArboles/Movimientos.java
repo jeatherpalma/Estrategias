@@ -368,7 +368,7 @@ public class Movimientos {
 				historial.add(matGiradaIzquierda);
 			}
 			if(banderaAbajo){
-				matExpandor.add(matDerecha);
+				matExpandor.add(matAbajo);
 				historial.add(matGiradaAbajo);
 			}
 

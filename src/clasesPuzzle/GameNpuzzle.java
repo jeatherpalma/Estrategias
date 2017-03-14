@@ -26,6 +26,7 @@ public class GameNpuzzle {
 	private JScrollPane jScrollPaneGame;
 	private JButton jButtonprimeroEnAnchura;
 	private JButton jButtonEnProfundidad;
+    private JButton jButtonAEstrella;
 	////////////////////////////////////
 
 	//Objetos para el area de impresión
@@ -39,8 +40,12 @@ public class GameNpuzzle {
 
 	//Pila de nodos a expandir
 	Vector<Node> pilaDeNodosExpandir = new Vector<>();
+    //Onjetos de la clase ARbol y nodo
 	Node nodoGenerado = null;
 	Arbol arb;
+
+    //Objeto de la heuristica
+    A_Estrella aEstrella = new A_Estrella();
 
 	//Vector de matrices a expandir
 	Vector<int [][]> trayectoria = new Vector<>();
@@ -114,7 +119,7 @@ public class GameNpuzzle {
 				jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
 				jTextAreaResultado.append("\n");
 				jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
-				jTextAreaResultado.append("\n");
+				jTextAreaResultado.append("\n\n");
 				for (int i=trayectoria.size()-1; i>=0; i--)
 				{
 					for(int j=0; j<tamañoGame; j++)
@@ -165,7 +170,7 @@ public class GameNpuzzle {
 				jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
 				jTextAreaResultado.append("\n");
 				jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
-				jTextAreaResultado.append("\n");
+				jTextAreaResultado.append("\n\n");
 				for (int i=trayectoria.size()-1; i>=0; i--)
 				{
 					for(int j=0; j<tamañoGame; j++)
@@ -181,7 +186,58 @@ public class GameNpuzzle {
 			}
 		});
 
+        /*********************A_estrella*********************************************/
+        jButtonAEstrella = new JButton("A_Estrella");
+        jButtonAEstrella.setBounds(10,220,180,30);
+        jButtonAEstrella.setEnabled(false);
+        jButtonAEstrella.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Node aux = null;
+                int [][]sol = {{1,2,3},{4,5,6},{7,8,0}};
+                while (mvObjeto.banderaGeneral==false){
+                    aux = pilaDeNodosExpandir.remove(aEstrella.getExpandir(pilaDeNodosExpandir,tamañoGame));
+                    Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(aux.getPuzzle(),tamañoGame,sol);
+                    if(mvObjeto.banderaGeneral==true){
+                        break;
+                    }
+                    for (int i=0; i<matricesExpandir.size(); i++){
+						nodoGenerado = Arbol.nuevoArbol(aux, matricesExpandir.get(i));
+                        mvObjeto.historial.add(mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame));
+                        pilaDeNodosExpandir.addElement(nodoGenerado);
+                        arb = new Arbol(nodoGenerado);
 
+                    }
+                }
+
+                int contador=0;
+                while(aux!=null){
+                    contador++;
+                    trayectoria.add(aux.getPuzzle());
+                    aux=aux.getProfundidad2(aux);
+
+                }
+
+                jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
+                jTextAreaResultado.append("\n");
+                jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
+                jTextAreaResultado.append("\n\n");
+                for (int i=trayectoria.size()-1; i>=0; i--)
+                {
+                    for(int j=0; j<tamañoGame; j++)
+                    {
+                        for(int k=0; k<tamañoGame; k++){
+                            jTextAreaResultado.append(trayectoria.get(i)[j][k]+" ");
+                        }
+                        jTextAreaResultado.append("\n");
+                    }
+                    jTextAreaResultado.append("\n");
+                }
+
+            }
+        });
+
+        /***************************************************************************/
 		//Boton que genera el juego
 		jButtonGenerarJuego = new JButton("Generar puzzle");
 		jButtonGenerarJuego.setBounds(10,70,180,30);
@@ -190,6 +246,7 @@ public class GameNpuzzle {
                 try {
 					jButtonEnProfundidad.setEnabled(true);
 					jButtonprimeroEnAnchura.setEnabled(true);
+                    jButtonAEstrella.setEnabled(true);
 					jTextAreaResultado.append("");
                     if (jTextFieldCantidadElementos.getText().equals("")) {
                         JOptionPane.showMessageDialog(null, "Error introduzca una cantidad",
@@ -213,7 +270,10 @@ public class GameNpuzzle {
                         }
                         defaultTableModel.addRow(rowAddTable);
                     }
-					int [][] game = {{7,0,1},{2,4,8},{6,3,5}};
+					int [][] game = {{5,2,8},{4,1,7},{0,3,6}};
+					//int [][] game = {{3,2,6},{5,7,4},{8,0,1}};
+                    //int [][]game = {{5,2,8},{4,1,7},{0,3,6}};
+                    //int [][] game = {{1,2,3},{4,5,6},{7,0,8}};
 					//874320651
 					nodoGenerado = Arbol.nuevoArbol(null,game);
 					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
@@ -243,6 +303,7 @@ public class GameNpuzzle {
 		jFramePrincipal.add(jButtonprimeroEnAnchura);
 		jFramePrincipal.add(jButtonEnProfundidad);
 		jFramePrincipal.add(jScrollPaneResultado);
+        jFramePrincipal.add(jButtonAEstrella);
 		/*****************************************************************/
 
 
