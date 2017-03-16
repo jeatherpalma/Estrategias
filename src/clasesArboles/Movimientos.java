@@ -1,5 +1,7 @@
 package clasesArboles;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -7,17 +9,20 @@ import java.util.Vector;
  */
 
 public class Movimientos {
-
+	//Vector de matrices a expandir representan un movimiento en el puzzle
 	Vector<int[][]> matExpandor = new Vector<>();
-	public Vector<String> historial = new Vector<>();
+	//Map de los nodos expandidos
+	public Map<String,String> historial2 = new HashMap<>();
+	//Contador de nodos expandidos
 	public int contador = 0;
-
+	//Bandera de llegada al objetivo
 	public boolean banderaGeneral=false;
 
+	//Función que regresa los nodos del nodo expandido
     public Vector<int[][]> regresaVector(int game[][], int tamañoGame, int [][]gameResuelto){
-		boolean banderaDerecha = true, banderaIzquierda = true, banderaAbajo = true, banderaArriba = true;
-
+		//Contador de nodos
         contador ++;
+		System.out.println(contador);
 		if(convierteMatrizString(game,tamañoGame).equals(convierteMatrizString(gameResuelto, tamañoGame))){
 			banderaGeneral = true;
 
@@ -62,30 +67,16 @@ public class Movimientos {
 			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha, tamañoGame), tamañoGame);
 			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo, tamañoGame), tamañoGame);
 
-			for (int i = 0; i <historial.size(); i++) {
 
-				if(historial.get(i).equals(matGiradaDerecha)){
-					banderaDerecha = false;
-					break;
-				}
-			}
-
-        	for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaAbajo)){
-					banderaAbajo = false;
-					break;
-				}
-			}
-
-        	if(banderaDerecha){
+        	if(busquedaNodos(matGiradaDerecha)){
         		matExpandor.add(matDerecha);
-				historial.add(matGiradaDerecha);
+				historial2.put(matGiradaDerecha,matGiradaDerecha);
 
         	}
 
-        	if(banderaAbajo){
+        	if(busquedaNodos(matGiradaAbajo)){
         		matExpandor.add(matAbajo);
-				historial.add(matGiradaAbajo);
+				historial2.put(matGiradaAbajo,matGiradaAbajo);
 			}
 
         }else
@@ -96,30 +87,19 @@ public class Movimientos {
         	//[y0,xn-1] = [y,x-1],[y+1,x]
 			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo, tamañoGame), tamañoGame);
      		matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda, tamañoGame), tamañoGame);
-			for (int i = 0; i <historial.size(); i++) {
-
-				if(historial.get(i).equals(matGiradaIzquierda)){
-					banderaIzquierda = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaAbajo)){
-					banderaAbajo = false;
-					break;
-				}
-			}
 
 
-			if(banderaIzquierda){
+
+			if(busquedaNodos(matGiradaIzquierda)){
 				matExpandor.add(matIzquierda);
-				historial.add(matGiradaIzquierda);
+				historial2.put(matGiradaIzquierda,matGiradaIzquierda);
+
 			}
 
-			if(banderaAbajo){
+			if(busquedaNodos(matGiradaAbajo)){
 				matExpandor.add(matAbajo);
-				historial.add(matGiradaAbajo);
+				historial2.put(matGiradaAbajo,matGiradaAbajo);
+
 			}
         }else
 
@@ -129,29 +109,18 @@ public class Movimientos {
         	//[yn-1,xn-1] = [y-1,x],[y,x-1]
 			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
 			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda, tamañoGame), tamañoGame);
-			for (int i = 0; i <historial.size(); i++) {
 
-				if(historial.get(i).equals(matGiradaIzquierda)){
-					banderaIzquierda = false;
-					break;
-				}
-			}
 
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaArriba)){
-					banderaArriba = false;
-					break;
-				}
-			}
-
-			if(banderaIzquierda){
+			if(busquedaNodos(matGiradaIzquierda)){
 				matExpandor.add(matIzquierda);
-				historial.add(matGiradaIzquierda);
+				historial2.put(matGiradaIzquierda,matGiradaIzquierda);
+
 			}
 
-			if(banderaArriba){
+			if(busquedaNodos(matGiradaArriba)){
 				matExpandor.add(matArriba);
-				historial.add(matGiradaArriba);
+				historial2.put(matGiradaArriba,matGiradaArriba);
+
 			}
 
         }else
@@ -162,29 +131,17 @@ public class Movimientos {
             //[yn-1,x0] = [y-1,x],[y,x+1]
 			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
 			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha, tamañoGame), tamañoGame);
-			for (int i = 0; i <historial.size(); i++) {
 
-				if(historial.get(i).equals(matGiradaDerecha)){
-					banderaDerecha = false;
-					break;
-				}
-			}
 
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaArriba)){
-					banderaArriba = false;
-					break;
-				}
-			}
-
-			if(banderaDerecha){
+			if(busquedaNodos(matGiradaDerecha)){
 				matExpandor.add(matDerecha);
-				historial.add(matGiradaDerecha);
+				historial2.put(matGiradaDerecha,matGiradaDerecha);
 			}
 
-			if(banderaArriba){
+			if(busquedaNodos(matGiradaArriba)){
 				matExpandor.add(matArriba);
-				historial.add(matGiradaArriba);
+				historial2.put(matGiradaArriba,matGiradaArriba);
+
 			}
         }else
 
@@ -197,40 +154,22 @@ public class Movimientos {
 			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda, tamañoGame), tamañoGame);
 			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo,tamañoGame), tamañoGame);
 
-			for (int i = 0; i <historial.size(); i++) {
 
-				if(historial.get(i).equals(matGiradaDerecha)){
-					banderaDerecha = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaAbajo)){
-					banderaAbajo = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaIzquierda)){
-					banderaIzquierda = false;
-					break;
-				}
-			}
-
-			if(banderaAbajo){
+			if(busquedaNodos(matGiradaAbajo)){
 				matExpandor.add(matAbajo);
-				historial.add(matGiradaAbajo);
+				historial2.put(matGiradaAbajo,matGiradaAbajo);
+
 			}
-			if(banderaDerecha){
+			if(busquedaNodos(matGiradaDerecha)){
 				matExpandor.add(matDerecha);
-				historial.add(matGiradaDerecha);
+				historial2.put(matGiradaDerecha,matGiradaDerecha);
+
 			}
 
-			if(banderaIzquierda){
+			if(busquedaNodos(matGiradaIzquierda)){
 				matExpandor.add(matIzquierda);
-				historial.add(matGiradaIzquierda);
+				historial2.put(matGiradaIzquierda,matGiradaIzquierda);
+
 			}
 
 
@@ -247,40 +186,22 @@ public class Movimientos {
 			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
 			matGiradaAbajo = convierteMatrizString(mueveAbajo(matAbajo,tamañoGame), tamañoGame);
 
-			for (int i = 0; i <historial.size(); i++) {
 
-				if(historial.get(i).equals(matGiradaDerecha)){
-					banderaDerecha = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaAbajo)){
-					banderaAbajo = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaArriba)){
-					banderaArriba = false;
-					break;
-				}
-			}
-
-			if(banderaAbajo){
+			if(busquedaNodos(matGiradaAbajo)){
 				matExpandor.add(matAbajo);
-				historial.add(matGiradaAbajo);
+				historial2.put(matGiradaAbajo,matGiradaAbajo);
+
 			}
-			if(banderaDerecha){
+			if(busquedaNodos(matGiradaDerecha)){
 				matExpandor.add(matDerecha);
-				historial.add(matGiradaDerecha);
+				historial2.put(matGiradaDerecha,matGiradaDerecha);
+
 			}
 
-			if(banderaArriba){
+			if(busquedaNodos(matGiradaArriba)){
 				matExpandor.add(matArriba);
-				historial.add(matGiradaArriba);
+				historial2.put(matGiradaArriba,matGiradaArriba);
+
 			}
 
         }else
@@ -293,42 +214,24 @@ public class Movimientos {
 			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
 			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda,tamañoGame), tamañoGame);
 
-			for (int i = 0; i <historial.size(); i++) {
-
-				if(historial.get(i).equals(matGiradaDerecha)){
-					banderaDerecha = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaIzquierda)){
-					banderaIzquierda = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaArriba)){
-					banderaArriba = false;
-					break;
-				}
-			}
 
 
-			if(banderaDerecha){
+			if(busquedaNodos(matGiradaDerecha)){
 				matExpandor.add(matDerecha);
-				historial.add(matGiradaDerecha);
+				historial2.put(matGiradaDerecha,matGiradaDerecha);
+
 			}
 
-            if(banderaIzquierda){
+            if(busquedaNodos(matGiradaIzquierda)){
                 matExpandor.add(matIzquierda);
-                historial.add(matGiradaIzquierda);
-            }
+				historial2.put(matGiradaIzquierda,matGiradaIzquierda);
 
-			if(banderaArriba){
+			}
+
+			if(busquedaNodos(matGiradaArriba)){
 				matExpandor.add(matArriba);
-				historial.add(matGiradaArriba);
+				historial2.put(matGiradaArriba,matGiradaArriba);
+
 			}
 
         }else
@@ -341,40 +244,21 @@ public class Movimientos {
 			matGiradaArriba = convierteMatrizString(mueveArriva(matArriba, tamañoGame), tamañoGame);
 			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda,tamañoGame), tamañoGame);
 
-			for (int i = 0; i <historial.size(); i++) {
-
-				if(historial.get(i).equals(matGiradaAbajo)){
-					banderaAbajo = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaIzquierda)){
-					banderaIzquierda = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaArriba)){
-					banderaArriba = false;
-					break;
-				}
-			}
-
-			if(banderaIzquierda){
+			if(busquedaNodos(matGiradaIzquierda)){
 				matExpandor.add(matIzquierda);
-				historial.add(matGiradaIzquierda);
+				historial2.put(matGiradaIzquierda,matGiradaIzquierda);
+
 			}
-			if(banderaAbajo){
+			if(busquedaNodos(matGiradaAbajo)){
 				matExpandor.add(matAbajo);
-				historial.add(matGiradaAbajo);
+				historial2.put(matGiradaAbajo,matGiradaAbajo);
+
 			}
 
-			if(banderaArriba){
+			if(busquedaNodos(matGiradaArriba)){
 				matExpandor.add(matArriba);
-				historial.add(matGiradaArriba);
+				historial2.put(matGiradaArriba,matGiradaArriba);
+
 			}
         }
 
@@ -387,52 +271,27 @@ public class Movimientos {
 			matGiradaIzquierda = convierteMatrizString(mueveIzquierda(matIzquierda,tamañoGame), tamañoGame);
 			matGiradaDerecha = convierteMatrizString(mueveDerecha(matDerecha,tamañoGame),tamañoGame);
 
-			for (int i = 0; i <historial.size(); i++) {
 
-				if(historial.get(i).equals(matGiradaAbajo)){
-					banderaAbajo = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaIzquierda)){
-					banderaIzquierda = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-				if(historial.get(i).equals(matGiradaArriba)){
-					banderaArriba = false;
-					break;
-				}
-			}
-
-			for (int i = 0; i <historial.size(); i++) {
-
-				if(historial.get(i).equals(matGiradaDerecha)){
-					banderaDerecha = false;
-					break;
-				}
-			}
-
-			if(banderaIzquierda){
+			if(busquedaNodos(matGiradaIzquierda)){
 				matExpandor.add(matIzquierda);
-				historial.add(matGiradaIzquierda);
+				historial2.put(matGiradaIzquierda,matGiradaIzquierda);
+
 			}
-			if(banderaAbajo){
+			if(busquedaNodos(matGiradaAbajo)){
 				matExpandor.add(matAbajo);
-				historial.add(matGiradaAbajo);
+				historial2.put(matGiradaAbajo,matGiradaAbajo);
+
 			}
 
-			if(banderaArriba){
+			if(busquedaNodos(matGiradaArriba)){
 				matExpandor.add(matArriba);
-				historial.add(matGiradaArriba);
+				historial2.put(matGiradaArriba,matGiradaArriba);
+
 			}
-			if(banderaDerecha){
+			if(busquedaNodos(matGiradaDerecha)){
 				matExpandor.add(matDerecha);
-				historial.add(matGiradaDerecha);
+				historial2.put(matGiradaDerecha,matGiradaDerecha);
+
 			}
 
         }
@@ -528,4 +387,13 @@ public class Movimientos {
     	
     	return matNew;
     }
+
+	//Regresa un boolean si se encuentra el harray
+	public boolean busquedaNodos(String key) {
+		if(historial2.containsKey(key)){
+			return false;
+		}
+		else
+			return true;
+	}
 }

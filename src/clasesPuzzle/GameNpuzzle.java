@@ -53,8 +53,13 @@ public class GameNpuzzle {
 	//Objeto de movimientos
 	Movimientos mvObjeto = new Movimientos();
 
+    //Variables en donde se guarda el puzzle y el tamaño
 	int [][] matrizGame;
+    int [][] solucion;
 	int tamañoGame;
+
+    //Memoria utilizada
+    long memory;
 
 
 	//Metodo constructor
@@ -90,8 +95,25 @@ public class GameNpuzzle {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				int [][]sol = {{0,1,2},{3,4,5},{6,7,8}};
-				trayectoria = new Vector<>();
+                //Cuenta de nodos expandidos
+                mvObjeto.banderaGeneral=false;
+                mvObjeto.contador =0;
+
+                int [][]sol = getSolucion(tamañoGame);
+                int [][] game =cargarJuego(tamañoGame);
+
+                //Limpieza de los vectores y el hash
+                pilaDeNodosExpandir.clear();
+				mvObjeto.historial2.clear();
+				trayectoria.clear();
+
+				//Strin de puzzle
+				String puzzle = mvObjeto.convierteMatrizString(game, tamañoGame);
+                //Se agrega el juego al nodo y al historial
+                nodoGenerado = Arbol.nuevoArbol(null,game);
+				mvObjeto.historial2.put(puzzle,puzzle);
+                pilaDeNodosExpandir.addElement(nodoGenerado);
+
 				while(mvObjeto.banderaGeneral==false){
 					Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(pilaDeNodosExpandir.get(0).getPuzzle(),tamañoGame,sol);
 					if(mvObjeto.banderaGeneral==true){
@@ -99,7 +121,8 @@ public class GameNpuzzle {
 					}
 					for (int i=0; i<matricesExpandir.size(); i++){
 						nodoGenerado = Arbol.nuevoArbol(pilaDeNodosExpandir.get(0), matricesExpandir.get(i));
-						mvObjeto.historial.add(mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame));
+						String puzzleExpandido = mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame);
+						mvObjeto.historial2.put(puzzleExpandido,puzzleExpandido);
 						pilaDeNodosExpandir.addElement(nodoGenerado);
 						arb = new Arbol(nodoGenerado);
 
@@ -141,7 +164,24 @@ public class GameNpuzzle {
 		jButtonEnProfundidad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int [][]sol = {{0,1,2},{3,4,5},{6,7,8}};
+                //Cuenta de nodos expandidos
+                mvObjeto.banderaGeneral=false;
+                mvObjeto.contador =0;
+
+                int [][]sol = getSolucion(tamañoGame);
+                int [][] game =cargarJuego(tamañoGame);
+
+                //Limpieza de los vectores
+                pilaDeNodosExpandir.clear();
+				mvObjeto.historial2.clear();
+                trayectoria.clear();
+
+                //Se agrega el juego
+                nodoGenerado = Arbol.nuevoArbol(null,game);
+				mvObjeto.historial2.put(mvObjeto.convierteMatrizString(game, tamañoGame),mvObjeto.convierteMatrizString(game, tamañoGame));
+                pilaDeNodosExpandir.addElement(nodoGenerado);
+
+
 				//Forma de pila el vector de nodos a expandir
 				Node aux = null;
 				while(mvObjeto.banderaGeneral==false){
@@ -152,7 +192,8 @@ public class GameNpuzzle {
 					}
 					for (int i=0; i<matricesExpandir.size(); i++){
 						nodoGenerado = Arbol.nuevoArbol(aux, matricesExpandir.get(i));
-						mvObjeto.historial.add(mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame));
+						String puzzleExpandido = mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame);
+						mvObjeto.historial2.put(puzzleExpandido,puzzleExpandido);
 						pilaDeNodosExpandir.addElement(nodoGenerado);
 						arb = new Arbol(nodoGenerado);
 
@@ -193,8 +234,27 @@ public class GameNpuzzle {
         jButtonAEstrella.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Cuenta de nodos expandidos
+                mvObjeto.banderaGeneral=false;
+                mvObjeto.contador =0;
+
+                int [][]sol = getSolucion(tamañoGame);
+                int [][] game =cargarJuego(tamañoGame);
+
+                //Limpieza de los vectores
+                pilaDeNodosExpandir.clear();
+				mvObjeto.historial2.clear();
+				trayectoria.clear();
+
+                //Se agrega el juego
+                nodoGenerado = Arbol.nuevoArbol(null,game);
+				mvObjeto.historial2.put(mvObjeto.convierteMatrizString(game, tamañoGame),mvObjeto.convierteMatrizString(game, tamañoGame));
+				pilaDeNodosExpandir.addElement(nodoGenerado);
+
+
+
                 Node aux = null;
-                int [][]sol = {{1,2,3},{4,5,6},{7,8,0}};
+
                 while (mvObjeto.banderaGeneral==false){
                     aux = pilaDeNodosExpandir.remove(aEstrella.getExpandir(pilaDeNodosExpandir,tamañoGame));
                     Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(aux.getPuzzle(),tamañoGame,sol);
@@ -203,12 +263,16 @@ public class GameNpuzzle {
                     }
                     for (int i=0; i<matricesExpandir.size(); i++){
 						nodoGenerado = Arbol.nuevoArbol(aux, matricesExpandir.get(i));
-                        mvObjeto.historial.add(mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame));
+						String puzzleExpandido = mvObjeto.convierteMatrizString(matricesExpandir.get(i), tamañoGame);
+						mvObjeto.historial2.put(puzzleExpandido,puzzleExpandido);
                         pilaDeNodosExpandir.addElement(nodoGenerado);
                         arb = new Arbol(nodoGenerado);
 
                     }
+
+
                 }
+
 
                 int contador=0;
                 while(aux!=null){
@@ -256,7 +320,7 @@ public class GameNpuzzle {
 
                     DefaultTableModel defaultTableModel = new DefaultTableModel(0, tamañoGame);
                     jTableGame = new JTable(defaultTableModel);
-                    jTableGame.setFont(new Font("Arial",Font.BOLD,20));
+                    jTableGame.setFont(new Font("Arial",Font.BOLD,18));
 					jTableGame.getCellRenderer(0,0);
                     jScrollPaneGame = new JScrollPane(jTableGame);
                     jScrollPaneGame.setBounds(200,70,200,200);
@@ -270,13 +334,16 @@ public class GameNpuzzle {
                         }
                         defaultTableModel.addRow(rowAddTable);
                     }
-					int [][] game = {{5,2,8},{4,1,7},{0,3,6}};
+					//int [][] game = {{5,2,8},{4,1,7},{0,3,6}};
 					//int [][] game = {{3,2,6},{5,7,4},{8,0,1}};
                     //int [][]game = {{5,2,8},{4,1,7},{0,3,6}};
                     //int [][] game = {{1,2,3},{4,5,6},{7,0,8}};
+					//int [][] game = {{2,8,5},{1,6,3},{4,0,7}};
+					//int [][] game = {{0,7,5},{2,1,8},{3,4,6}};
 					//874320651
-					nodoGenerado = Arbol.nuevoArbol(null,game);
-					mvObjeto.historial.add(mvObjeto.convierteMatrizString(game, tamañoGame));
+					nodoGenerado = Arbol.nuevoArbol(null,matrizGame);
+					String puzzleExpandido = mvObjeto.convierteMatrizString(matrizGame, tamañoGame);
+					mvObjeto.historial2.put(puzzleExpandido,puzzleExpandido);
 					pilaDeNodosExpandir.addElement(nodoGenerado);
 
                 }catch (NumberFormatException ed){
@@ -356,4 +423,32 @@ public class GameNpuzzle {
 		}
         return matriz;
 	}
+	public int [][] cargarJuego(int tamañoGame){
+		int matriz [][] = new int[tamañoGame][tamañoGame];
+
+		for (int i = 0; i<tamañoGame; i++){
+			for (int j=0; j<tamañoGame; j++){
+				matriz[i][j] = Integer.parseInt(jTableGame.getValueAt(i,j).toString());
+			}
+
+		}
+
+		return matriz;
+	}
+    public int [][] getSolucion(int tamañoGame){
+
+        int [][] solucion = new int[tamañoGame][tamañoGame];
+        int posiciones =1;
+        for (int i = 0; i<tamañoGame; i++){
+            for (int j=0; j<tamañoGame; j++){
+                solucion[i][j]= posiciones;
+                posiciones++;
+            }
+
+        }
+        solucion[tamañoGame-1][tamañoGame-1]=0;
+        return solucion;
+    }
+
+
 }
