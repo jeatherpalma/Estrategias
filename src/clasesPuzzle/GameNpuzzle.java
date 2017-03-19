@@ -2,11 +2,14 @@ package clasesPuzzle;
 
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 import clasesArboles.Arbol;
 import clasesArboles.Movimientos;
@@ -23,21 +26,26 @@ public class GameNpuzzle {
 	private JButton jButtonGenerarJuego;
 	private JTextField jTextFieldCantidadElementos;
 	private JTable jTableGame;
+	private DefaultTableModel defaultTableModel;
 	private JScrollPane jScrollPaneGame;
 	private JButton jButtonprimeroEnAnchura;
 	private JButton jButtonEnProfundidad;
     private JButton jButtonAEstrella;
+	private JButton jButtonClean;
 	////////////////////////////////////
 
 	//Objetos para el area de impresión
 	private JTextArea jTextAreaResultado;
 	private JScrollPane jScrollPaneResultado;
+	private JTextArea jTextAreaEspacio, jTextAreaTiempo, jTextAreaNodos;
 
 	////////Fuentes para los labels/////
 	Font fontTitutlos = new Font("Arial", Font.BOLD,25);
 	Font fontReferencias = new Font("Arial", Font.BOLD, 15);
+	Font fontResultados = new Font("Arial", Font.BOLD, 12);
 	////////////////////////////////////
-
+	//Indicador del método
+	JLabel jLabelMetodo;
 	//Pila de nodos a expandir
 	Vector<Node> pilaDeNodosExpandir = new Vector<>();
     //Onjetos de la clase ARbol y nodo
@@ -60,6 +68,9 @@ public class GameNpuzzle {
 
     //Memoria utilizada
     long memory;
+	//Para calcular el tiempo
+	long tiempoInicio,tiempoFinal;
+	DecimalFormat decimalesFormato = new DecimalFormat("0.000");
 
 
 	//Metodo constructor
@@ -69,6 +80,7 @@ public class GameNpuzzle {
 		jFramePrincipal.setSize(700,700);
 		jFramePrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jFramePrincipal.setLayout(null);
+
 		/////////////////////////////////////////////////////////////
 
 		/*Generaciónde de contenido de la ventana******************************/
@@ -88,14 +100,24 @@ public class GameNpuzzle {
         jTextFieldCantidadElementos.setFont(fontReferencias);
 
 		/****************************Boton primero en anchura************************/
-		jButtonprimeroEnAnchura = new JButton("Anchura");
+		jButtonprimeroEnAnchura = new JButton("Breadth-First");
 		jButtonprimeroEnAnchura.setBounds(10,140,180,30);
 		jButtonprimeroEnAnchura.setEnabled(false);
 		jButtonprimeroEnAnchura.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				jLabelMetodo.setText("Breadth-First");
+				//Borrar los campos
+				jTextAreaEspacio.setText("");
+				jTextAreaNodos.setText("");
+				jTextAreaTiempo.setText("");
+				jTextAreaResultado.setText("");
 
-                //Cuenta de nodos expandidos
+				//Se carga la memoria en uso antes de empezar con el algoritmo en Profunidad
+				memory = Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+				//Tiempo de inicio
+				tiempoInicio = System.currentTimeMillis();
+				//Cuenta de nodos expandidos
                 mvObjeto.banderaGeneral=false;
                 mvObjeto.contador =0;
 
@@ -138,11 +160,21 @@ public class GameNpuzzle {
 					trayectoria.add(nodoGenerado.getPuzzle());
 					nodoGenerado=nodoGenerado.getProfundidad2(nodoGenerado);
 				}
+				//tiempo fin
+				tiempoFinal = (System.currentTimeMillis() -tiempoInicio);
+				//Se hace el calculo con la memoria utilizada después del algoritmo
+				memory = Math.abs(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory()-memory)/(1024L*1024L);
 
-				jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
-				jTextAreaResultado.append("\n");
-				jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
-				jTextAreaResultado.append("\n\n");
+				//Impresión de los resultados
+				jTextAreaTiempo.append(decimalesFormato.format(tiempoFinal*1.6667e-5)+ "m " +decimalesFormato.format(tiempoFinal*0.001)
+				+"s");
+				jTextAreaNodos.append("\n");
+				jTextAreaNodos.append("Profundidad objetivo: " +contador);
+				jTextAreaNodos.append("\n");
+				jTextAreaEspacio.append("\n");
+				jTextAreaEspacio.append("Memoria utilizada: " +memory+ " Mb");
+				jTextAreaNodos.append("Nodos expandidos: " +mvObjeto.contador);
+
 				for (int i=trayectoria.size()-1; i>=0; i--)
 				{
 					for(int j=0; j<tamañoGame; j++)
@@ -158,13 +190,23 @@ public class GameNpuzzle {
 		});
 
 		/************************En profundidad********************************/
-		jButtonEnProfundidad = new JButton("Profundidad");
+		jButtonEnProfundidad = new JButton("Depth-first");
 		jButtonEnProfundidad.setBounds(10,180,180,30);
 		jButtonEnProfundidad.setEnabled(false);
 		jButtonEnProfundidad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                //Cuenta de nodos expandidos
+				jLabelMetodo.setText("Depth-first");
+				//Borrar los campos
+				jTextAreaEspacio.setText("");
+				jTextAreaNodos.setText("");
+				jTextAreaTiempo.setText("");
+				jTextAreaResultado.setText("");
+				//SE carga la memoria en uso antes de empezar con el algoritmo en Profunidad
+				memory = Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+				//Tiempo de inicio
+				tiempoInicio = System.currentTimeMillis();
+				//Cuenta de nodos expandidos
                 mvObjeto.banderaGeneral=false;
                 mvObjeto.contador =0;
 
@@ -207,11 +249,20 @@ public class GameNpuzzle {
 					aux=aux.getProfundidad2(aux);
 
 				}
+				//tiempo fin
+				tiempoFinal = (System.currentTimeMillis() -tiempoInicio);
+				//Se hace el calculo con la memoria utilizada después del algoritmo
+				memory = Math.abs(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory()-memory)/(1024L*1024L);
 
-				jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
-				jTextAreaResultado.append("\n");
-				jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
-				jTextAreaResultado.append("\n\n");
+				//Impresión de los resultados
+				jTextAreaTiempo.append(decimalesFormato.format(tiempoFinal*1.6667e-5)+ "m " +decimalesFormato.format(tiempoFinal*0.001)
+						+"s");
+				jTextAreaNodos.append("\n");
+				jTextAreaNodos.append("Profundidad objetivo: " +contador);
+				jTextAreaNodos.append("\n");
+				jTextAreaEspacio.append("\n");
+				jTextAreaEspacio.append("Memoria utilizada: " +memory+ " Mb");
+				jTextAreaNodos.append("Nodos expandidos: " +mvObjeto.contador);
 				for (int i=trayectoria.size()-1; i>=0; i--)
 				{
 					for(int j=0; j<tamañoGame; j++)
@@ -234,7 +285,17 @@ public class GameNpuzzle {
         jButtonAEstrella.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Cuenta de nodos expandidos
+				jLabelMetodo.setText("A*");
+				//Borrar los campos
+				jTextAreaEspacio.setText("");
+				jTextAreaNodos.setText("");
+				jTextAreaTiempo.setText("");
+				jTextAreaResultado.setText("");
+                //SE carga la memoria en uso antes de empezar con el algoritmo en A*
+				memory = Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+				//Tiempo de inicio
+				tiempoInicio = System.currentTimeMillis();
+				//Cuenta de nodos expandidos
                 mvObjeto.banderaGeneral=false;
                 mvObjeto.contador =0;
 
@@ -255,6 +316,7 @@ public class GameNpuzzle {
 
                 Node aux = null;
 
+				//Algoritmo a estrella
                 while (mvObjeto.banderaGeneral==false){
                     aux = pilaDeNodosExpandir.remove(aEstrella.getExpandir(pilaDeNodosExpandir,tamañoGame));
                     Vector<int[][]> matricesExpandir = mvObjeto.regresaVector(aux.getPuzzle(),tamañoGame,sol);
@@ -273,7 +335,6 @@ public class GameNpuzzle {
 
                 }
 
-
                 int contador=0;
                 while(aux!=null){
                     contador++;
@@ -282,10 +343,22 @@ public class GameNpuzzle {
 
                 }
 
-                jTextAreaResultado.append("Profundidad del nodo objetivo: " +contador);
-                jTextAreaResultado.append("\n");
-                jTextAreaResultado.append("Cantidad de nodos expandidos: " +mvObjeto.contador);
-                jTextAreaResultado.append("\n\n");
+				//tiempo fin
+				tiempoFinal = (System.currentTimeMillis() -tiempoInicio);
+				//Se hace el calculo con la memoria utilizada después del algoritmo
+				memory = Math.abs(Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory()-memory)/(1024L*1024L);
+
+				//Impresión de los resultados
+				jTextAreaTiempo.append(decimalesFormato.format(tiempoFinal*1.6667e-5)+ "m " +decimalesFormato.format(tiempoFinal*0.001)
+						+"s");
+				jTextAreaNodos.append("\n");
+				jTextAreaNodos.append("Profundidad objetivo: " +contador);
+				jTextAreaNodos.append("\n");
+				jTextAreaEspacio.append("\n");
+				jTextAreaEspacio.append("Memoria utilizada: " +memory+ " Mb");
+				jTextAreaNodos.append("Nodos expandidos: " +mvObjeto.contador);
+
+				//Impresión de los movimientos
                 for (int i=trayectoria.size()-1; i>=0; i--)
                 {
                     for(int j=0; j<tamañoGame; j++)
@@ -308,6 +381,12 @@ public class GameNpuzzle {
 		jButtonGenerarJuego.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
                 try {
+					jLabelMetodo.setText("");
+					//Borrar los campos
+					jTextAreaEspacio.setText("");
+					jTextAreaNodos.setText("");
+					jTextAreaTiempo.setText("");
+					jTextAreaResultado.setText("");
 					jButtonEnProfundidad.setEnabled(true);
 					jButtonprimeroEnAnchura.setEnabled(true);
                     jButtonAEstrella.setEnabled(true);
@@ -318,7 +397,7 @@ public class GameNpuzzle {
                     }
                     tamañoGame = Integer.parseInt(jTextFieldCantidadElementos.getText());
 
-                    DefaultTableModel defaultTableModel = new DefaultTableModel(0, tamañoGame);
+                    defaultTableModel = new DefaultTableModel(0, tamañoGame);
                     jTableGame = new JTable(defaultTableModel);
                     jTableGame.setFont(new Font("Arial",Font.BOLD,18));
 					jTableGame.getCellRenderer(0,0);
@@ -334,13 +413,7 @@ public class GameNpuzzle {
                         }
                         defaultTableModel.addRow(rowAddTable);
                     }
-					//int [][] game = {{5,2,8},{4,1,7},{0,3,6}};
-					//int [][] game = {{3,2,6},{5,7,4},{8,0,1}};
-                    //int [][]game = {{5,2,8},{4,1,7},{0,3,6}};
-                    //int [][] game = {{1,2,3},{4,5,6},{7,0,8}};
-					//int [][] game = {{2,8,5},{1,6,3},{4,0,7}};
-					//int [][] game = {{0,7,5},{2,1,8},{3,4,6}};
-					//874320651
+
 					nodoGenerado = Arbol.nuevoArbol(null,matrizGame);
 					String puzzleExpandido = mvObjeto.convierteMatrizString(matrizGame, tamañoGame);
 					mvObjeto.historial2.put(puzzleExpandido,puzzleExpandido);
@@ -353,12 +426,68 @@ public class GameNpuzzle {
 
 			}
 		});
-
+		//Area de movimientos
+		JLabel jLabelMovimientos = new JLabel("Movimientos:");
+		jLabelMovimientos.setFont(fontReferencias);
+		jLabelMovimientos.setBounds(290,290,180,30);
 		jTextAreaResultado = new JTextArea();
 		jScrollPaneResultado = new JScrollPane(jTextAreaResultado);
-		jScrollPaneResultado.setBounds(120,290,400,300);
+		jScrollPaneResultado.setBounds(290,320,400,300);
+
+		//Area de espacio
+		JLabel jLabelEspacio = new JLabel("Espacio en memoria:");
+		jLabelEspacio.setFont(fontReferencias);
+		jLabelEspacio.setBounds(10,290,240,30);
+		jTextAreaEspacio = new JTextArea();
+		jTextAreaEspacio.setFont(fontResultados);
+		jTextAreaEspacio.setBounds(10,320,240,50);
 
 
+		//Area de Nodos
+		JLabel jLabelNodos = new JLabel("Nodos expandidos y Profundida:");
+		jLabelNodos.setFont(fontReferencias);
+		jLabelNodos.setBounds(10,390,265,30);
+		jTextAreaNodos = new JTextArea();
+		jTextAreaNodos.setFont(fontResultados);
+		jTextAreaNodos.setBounds(10,420,240,50);
+
+
+		//Area de Tiempo
+		JLabel jLabelTiempo = new JLabel("Tiempo necesario:");
+		jLabelTiempo.setFont(fontReferencias);
+		jLabelTiempo.setBounds(10,480,240,30);
+		jTextAreaTiempo = new JTextArea();
+		jTextAreaTiempo.setFont(fontResultados);
+		jTextAreaTiempo.setBounds(10,510,240,50);
+
+		//Boton de limpiar
+		jButtonClean = new JButton("Limpiar");
+		jButtonClean.setBounds(10,570,180,30);
+		jButtonClean.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					for (int i=0; i<tamañoGame; i++){
+						defaultTableModel.removeRow(0);
+					}
+					jTextFieldCantidadElementos.setText("");
+					jLabelMetodo.setText("");
+					jTextAreaEspacio.setText("");
+					jTextAreaNodos.setText("");
+					jTextAreaTiempo.setText("");
+					jTextAreaResultado.setText("");
+				}catch (Exception ex){
+
+				}
+
+
+			}
+		});
+
+		///Indicador del método
+		jLabelMetodo = new JLabel();
+		jLabelMetodo.setFont(new Font("Arial",Font.BOLD, 30));
+		jLabelMetodo.setBounds(440,100,250,60);
 		/**********************************************************************/
 
 
@@ -371,11 +500,21 @@ public class GameNpuzzle {
 		jFramePrincipal.add(jButtonEnProfundidad);
 		jFramePrincipal.add(jScrollPaneResultado);
         jFramePrincipal.add(jButtonAEstrella);
+		jFramePrincipal.add(jLabelMovimientos);
+		jFramePrincipal.add(jTextAreaEspacio);
+		jFramePrincipal.add(jLabelEspacio);
+		jFramePrincipal.add(jTextAreaNodos);
+		jFramePrincipal.add(jLabelNodos);
+		jFramePrincipal.add(jTextAreaTiempo);
+		jFramePrincipal.add(jLabelTiempo);
+		jFramePrincipal.add(jLabelMetodo);
+		jFramePrincipal.add(jButtonClean);
 		/*****************************************************************/
 
 
 		jFramePrincipal.setLocationRelativeTo(null);
 		jFramePrincipal.setVisible(true);
+
 	}
 
 

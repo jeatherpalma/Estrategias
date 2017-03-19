@@ -22,7 +22,6 @@ public class Movimientos {
     public Vector<int[][]> regresaVector(int game[][], int tamañoGame, int [][]gameResuelto){
 		//Contador de nodos
         contador ++;
-		System.out.println(contador);
 		if(convierteMatrizString(game,tamañoGame).equals(convierteMatrizString(gameResuelto, tamañoGame))){
 			banderaGeneral = true;
 
